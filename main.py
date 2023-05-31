@@ -1,14 +1,50 @@
+import json
 from nicegui import ui
 
 
-with ui.tabs() as tabs:
-    ui.tab("Home", icon="home")
-    ui.tab("About", icon="info")
+def build_panel_elements(fields_dict: dict):
+    if len(fields_dict) > 10:
+        num_columns = 2
+    else:
+        num_columns = 1
 
+    with ui.grid(columns=num_columns):
+        for key, value in fields_dict.items():
+            if value == "text":
+                ui.input(label=key)
+            if value == "number":
+                ui.number(label=key)
+            if isinstance(value, list):
+                ui.radio(value).props('inline')
+        ui.button('Add Item', on_click=lambda: ui.notify(f'You clicked me!'), color='green')
+
+
+# Get collection configuration details
+with open("configuration/collections.json") as collections_file:
+    my_collection = json.load(collections_file)
+
+# Create any required iterable lists in one loop through the json doc
+collection_names = []
+collection_dict = {}
+for collection in my_collection:
+    collection_names.append(collection['collection_name'])
+    collection_dict[collection['collection_name']] = collection['collection_fields']
+
+# Create tabs for each collection, as well as an "About" tab for information
+with ui.tabs() as tabs:
+    ui.tab(name="Home", icon="home")
+    for collection in my_collection:
+        ui.tab(name=collection['collection_name'], icon=collection['collection_icon'])
+    ui.tab(name="About", icon="info")
+
+# Populate tabs with specified fields
 with ui.tab_panels(tabs, value="Home"):
-    with ui.tab_panel("Home"):
-        ui.label("This is the first tab")
+    for tab_name in collection_names:
+        with ui.tab_panel(tab_name) as panel:
+            build_panel_elements(collection_dict[tab_name])
     with ui.tab_panel("About"):
         ui.label("This is the second tab")
+    with ui.tab_panel("Home"):
+        ui.label("This is the home screen for the app")
 
 ui.run()
