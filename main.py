@@ -43,8 +43,10 @@ with ui.tab_panels(tabs, value="Home"):
         with ui.tab_panel(tab_name) as panel:
             build_panel_elements(collection_dict[tab_name])
     with ui.tab_panel("About"):
-        ui.label("This is the second tab")
+        with open("configuration/about.md") as about_text:
+            ui.markdown(about_text.read())
     with ui.tab_panel("Home"):
-        ui.label("This is the home screen for the app")
+        with open("configuration/home_screen.md") as home_text:
+            ui.markdown(home_text.read())
 
 ui.run()
