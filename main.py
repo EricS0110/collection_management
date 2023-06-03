@@ -2,7 +2,32 @@ import json
 from nicegui import ui
 
 
-def build_panel_elements(fields_dict: dict):
+def add_book_clicked():
+    ui.notify("Add book clicked")
+    return
+
+
+def add_comic_clicked():
+    ui.notify("Add comic clicked")
+    return
+
+
+def add_music_clicked():
+    ui.notify("Add music clicked")
+    return
+
+
+def add_movie_clicked():
+    ui.notify("Add movie clicked")
+    return
+
+
+def add_television_clicked():
+    ui.notify("Add television_clicked")
+    return
+
+
+def build_panel_elements(fields_dict: dict, col_name: str):
     if len(fields_dict) > 10:
         num_columns = 2
     else:
@@ -16,7 +41,18 @@ def build_panel_elements(fields_dict: dict):
                 ui.number(label=key)
             if isinstance(value, list):
                 ui.radio(value).props('inline')
-        ui.button('Add Item', on_click=lambda: ui.notify(f'You clicked me!'), color='green')
+        # I don't know of a way to do this automatically, hard coding the collections by manual control here
+        match col_name:
+            case "Books":
+                ui.button('Add Item', on_click=add_book_clicked, color='green')
+            case "Comics":
+                ui.button('Add Item', on_click=add_comic_clicked, color='green')
+            case "Music":
+                ui.button('Add Item', on_click=add_music_clicked, color='green')
+            case "Movies":
+                ui.button('Add Item', on_click=add_movie_clicked, color='green')
+            case "Television":
+                ui.button('Add Item', on_click=add_television_clicked, color='green')
 
 
 # Get collection configuration details
@@ -41,7 +77,7 @@ with ui.tabs() as tabs:
 with ui.tab_panels(tabs, value="Home"):
     for tab_name in collection_names:
         with ui.tab_panel(tab_name) as panel:
-            build_panel_elements(collection_dict[tab_name])
+            build_panel_elements(collection_dict[tab_name], tab_name)
     with ui.tab_panel("About"):
         with open("configuration/about.md") as about_text:
             ui.markdown(about_text.read())
@@ -49,4 +85,4 @@ with ui.tab_panels(tabs, value="Home"):
         with open("configuration/home_screen.md") as home_text:
             ui.markdown(home_text.read())
 
-ui.run()
+ui.run(title="Collections App")
