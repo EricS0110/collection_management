@@ -18,7 +18,7 @@ settings = get_settings()
 
 
 def add_book_clicked():
-    ui.notify("Add book clicked")
+    book_title = book_title_input.value
     return
 
 
