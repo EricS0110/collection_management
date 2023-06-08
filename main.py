@@ -1,5 +1,7 @@
 from nicegui import ui
 
+from settings import get_settings
+
 
 book_columns = 1
 book_cover_options = ["Paperback", "Hardcover"]
@@ -12,8 +14,10 @@ movie_format_options = ["DVD", "Bluray", "4K"]
 television_columns = 1
 television_format_options = ["DVD", "Bluray", "4K"]
 
+settings = get_settings()
 
-def add_book_clicked(self):
+
+def add_book_clicked():
     ui.notify("Add book clicked")
     return
 
