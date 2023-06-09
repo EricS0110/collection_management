@@ -19,6 +19,4 @@ class Settings(BaseSettings):
 
 def get_settings():
     load_dotenv(BASE_DIR / "configuration" / "secrets.env")
-    settings = Settings()
-
-    return settings
+    return Settings()
