@@ -1,5 +1,6 @@
 from nicegui import ui
 
+from mongo import CollectionConnection
 from settings import get_settings
 
 book_columns = 1
@@ -16,7 +17,18 @@ television_format_options = ["DVD", "Bluray", "4K"]
 settings = get_settings()
 
 # Connect to Mongo and create a connection instance (very similar to original code, base off of that)
+mongodb = CollectionConnection(
+    user=settings.mongo_username,
+    pwd=settings.mongo_password.get_secret_value(),
+    cluster=settings.mongo_cluster,
+    database=settings.mongo_database,
+)
 
+def check_result(result: int, collection: str):
+    if result == 200:
+        ui.notify(f"{collection} successfully added!")
+    else:
+        ui.notify(f"{collection} not added :(")
 
 def add_book_clicked():
     book_title = book_title_input.value
@@ -32,6 +44,8 @@ def add_book_clicked():
     book = {"Title": book_title, "Series": book_series, "Series_Number": book_series_number, "Author": book_author,
             "Year": book_year, "Edition": book_edition, "ISBN": book_isbn, "Genre": book_genre, "Cover": book_cover,
             "Condition": book_condition}
+    result = mongodb.add_book(book)
+    check_result(result=result, collection="Book")
     return
 
 
@@ -54,6 +68,8 @@ def add_comic_clicked():
              "Issue_Month": comic_issue_month, "Issue_Year": comic_issue_year, "Volume": comic_volume, "UPC": comic_upc,
              "Variant": comic_variant, "Condition": comic_condition, "Publisher": comic_publisher,
              "Duplicates": comic_duplicates, "Owner": comic_owner, "Value": comic_value, "Value_Year": comic_value_year}
+    result = mongodb.add_comic(comic)
+    check_result(result=result, collection="Comic")
     return
 
 
@@ -67,6 +83,8 @@ def add_music_clicked():
     music_disc_format = music_format_input.value
     music = {"Album": music_album, "Artist": music_artist, "Year": music_year, "Disc_Number": music_disc_number,
              "Disc_Count": music_disc_count, "Genre": music_genre, "Format": music_disc_format}
+    result = mongodb.add_music(music)
+    check_result(result=result, collection="Music")
     return
 
 
@@ -83,6 +101,8 @@ def add_movie_clicked():
     movie = {"Title": movie_title, "Series": movie_series, "Series_Number": movie_series_number, "Year": movie_year,
              "Genre": movie_genre, "Disc_Format": movie_disc_format, "Disc_Number": movie_disc_number,
              "Disc_Count": movie_disc_count, "Notes": movie_notes}
+    result = mongodb.add_movie(movie)
+    check_result(result=result, collection="Movie")
     return
 
 
@@ -97,6 +117,8 @@ def add_television_clicked():
     television = {"Title": television_title, "Year": television_year, "Season": television_season,
                   "Disc_Number": television_disc_number, "Disc_Count": television_disc_count,
                   "Genre": television_genre, "Disc_Format": television_format}
+    result = mongodb.add_television(television)
+    check_result(result=result, collection="Television")
     return
 
 
